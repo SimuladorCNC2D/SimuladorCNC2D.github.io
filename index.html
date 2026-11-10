@@ -653,7 +653,6 @@ M30;</textarea>
         </div>
     </div>
 
-    <script src="cnc-interpreter.js"></script>
     <script>
         // ===================================================================
         //  SIMULADOR CNC 2D - Francos 2.1
@@ -927,11 +926,6 @@ M30;</textarea>
         const FRENADO_DURACION = 0.4;
         let lineaResaltadaActual = null;
         let gModal = 1;
-        // Resultado estructurado del núcleo CNC. La geometría actual se conserva
-        // mientras las siguientes fases migran la ejecución a este modelo.
-        let analisisCNCActual = null;
-        let estadosCNC = [];
-        let diagnosticosCNC = [];
 
         function getCSSVar(v) { return getComputedStyle(document.documentElement).getPropertyValue(v).trim(); }
         function toCanvasX(mmX) { return offsetX + (mmX * scale); }
@@ -987,17 +981,6 @@ M30;</textarea>
         }
         function limpiarResalteEditor() { lineaResaltadaActual = null; overlay.innerHTML = ""; overlay.style.display = "none"; }
 
-        function analizarProgramaEstructurado(texto) {
-            if (!window.CNCInterpreterCore) {
-                throw new Error('No se pudo cargar el núcleo del intérprete CNC.');
-            }
-            const analisis = window.CNCInterpreterCore.analyzeProgram(texto);
-            analisisCNCActual = analisis;
-            estadosCNC = analisis.snapshots;
-            diagnosticosCNC = analisis.diagnostics;
-            return analisis;
-        }
-
         function preValidarCodigoSintaxis(lineasRaw) {
             consoleBox.classList.remove('error');
             limpiarResalteEditor();
@@ -1044,20 +1027,9 @@ M30;</textarea>
         function inicializarYProcesar(todoDeGolpe = false) {
             pararSimulacion();
             const texto = editor.value;
-            limpiarDatosGraficos();
-            let analisis;
-            try {
-                analisis = analizarProgramaEstructurado(texto);
-            } catch (error) {
-                const linea = Number.isInteger(error.lineNumber) ? error.lineNumber : null;
-                consoleBox.classList.add('error');
-                consoleBox.innerText = `ERROR${linea ? ` [Línea ${linea}]` : ''}: ${error.message}`;
-                if (linea) resaltarLineaEnEditor(linea, true);
-                redibujarEscena();
-                return false;
-            }
-            const lineasRaw = analisis.program.blocks.map(bloque => bloque.rawLine);
+            const lineasRaw = texto.split('\n');
             if (!preValidarCodigoSintaxis(lineasRaw)) return false;
+            limpiarDatosGraficos();
             let xRef = 0, yRef = 0, zRef = 0;
             let absMode = true, avanceActual = 500;
             let hayZ = false;
