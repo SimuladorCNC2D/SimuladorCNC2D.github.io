@@ -4,6 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title id="pageTitle">Simulador de Código G (CNC 2D) v2.0.36 FrancOS 2.1</title>
+    <meta name="description" content="Simula y visualiza tu código G en 2D: trayectorias, cotas, tiempos de mecanizado y ejecución paso a paso.">
+
+    <!-- Vista previa al compartir el enlace (WhatsApp, Facebook, Telegram, LinkedIn) -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Simulador CNC 2D">
+    <meta property="og:locale" content="es_ES">
+    <meta property="og:title" content="Simulador de Código G (CNC 2D) v2.0.36">
+    <meta property="og:description" content="Simula y visualiza tu código G en 2D: trayectorias, cotas, tiempos de mecanizado y ejecución paso a paso.">
+    <meta property="og:url" content="https://simuladorcnc2d.github.io/">
+    <meta property="og:image" content="https://simuladorcnc2d.github.io/preview.png">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Simulador de Código G CNC 2D mostrando una pieza trazada con cotas">
+
+    <!-- Twitter / X -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Simulador de Código G (CNC 2D) v2.0.36">
+    <meta name="twitter:description" content="Simula y visualiza tu código G en 2D: trayectorias, cotas y tiempos de mecanizado.">
+    <meta name="twitter:image" content="https://simuladorcnc2d.github.io/preview.png">
     <style>
         /* ===== VARIABLES Y TEMAS ===== */
         :root {
@@ -633,6 +653,7 @@ M30;</textarea>
         </div>
     </div>
 
+    <script src="cnc-interpreter.js"></script>
     <script>
         // ===================================================================
         //  SIMULADOR CNC 2D - Francos 2.1
@@ -906,6 +927,11 @@ M30;</textarea>
         const FRENADO_DURACION = 0.4;
         let lineaResaltadaActual = null;
         let gModal = 1;
+        // Resultado estructurado del núcleo CNC. La geometría actual se conserva
+        // mientras las siguientes fases migran la ejecución a este modelo.
+        let analisisCNCActual = null;
+        let estadosCNC = [];
+        let diagnosticosCNC = [];
 
         function getCSSVar(v) { return getComputedStyle(document.documentElement).getPropertyValue(v).trim(); }
         function toCanvasX(mmX) { return offsetX + (mmX * scale); }
@@ -961,6 +987,17 @@ M30;</textarea>
         }
         function limpiarResalteEditor() { lineaResaltadaActual = null; overlay.innerHTML = ""; overlay.style.display = "none"; }
 
+        function analizarProgramaEstructurado(texto) {
+            if (!window.CNCInterpreterCore) {
+                throw new Error('No se pudo cargar el núcleo del intérprete CNC.');
+            }
+            const analisis = window.CNCInterpreterCore.analyzeProgram(texto);
+            analisisCNCActual = analisis;
+            estadosCNC = analisis.snapshots;
+            diagnosticosCNC = analisis.diagnostics;
+            return analisis;
+        }
+
         function preValidarCodigoSintaxis(lineasRaw) {
             consoleBox.classList.remove('error');
             limpiarResalteEditor();
@@ -1007,9 +1044,20 @@ M30;</textarea>
         function inicializarYProcesar(todoDeGolpe = false) {
             pararSimulacion();
             const texto = editor.value;
-            const lineasRaw = texto.split('\n');
-            if (!preValidarCodigoSintaxis(lineasRaw)) return false;
             limpiarDatosGraficos();
+            let analisis;
+            try {
+                analisis = analizarProgramaEstructurado(texto);
+            } catch (error) {
+                const linea = Number.isInteger(error.lineNumber) ? error.lineNumber : null;
+                consoleBox.classList.add('error');
+                consoleBox.innerText = `ERROR${linea ? ` [Línea ${linea}]` : ''}: ${error.message}`;
+                if (linea) resaltarLineaEnEditor(linea, true);
+                redibujarEscena();
+                return false;
+            }
+            const lineasRaw = analisis.program.blocks.map(bloque => bloque.rawLine);
+            if (!preValidarCodigoSintaxis(lineasRaw)) return false;
             let xRef = 0, yRef = 0, zRef = 0;
             let absMode = true, avanceActual = 500;
             let hayZ = false;
