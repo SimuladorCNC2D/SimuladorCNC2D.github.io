@@ -3,14 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title id="pageTitle">Simulador de Código G (CNC 2D) v2.0.36 FrancOS 2.1</title>
+    <title id="pageTitle">Simulador de Código G (CNC 2D) v2.0.38 FrancOS 2.1</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22%3E%3Cdefs%3E%3CradialGradient id=%22s%22 cx=%22.35%22 cy=%22.3%22 r=%22.8%22%3E%3Cstop offset=%220%22 stop-color=%22%23ffffff%22/%3E%3Cstop offset=%22.45%22 stop-color=%22%23b9bcc4%22/%3E%3Cstop offset=%221%22 stop-color=%22%234b4e57%22/%3E%3C/radialGradient%3E%3C/defs%3E%3Crect width=%2264%22 height=%2264%22 rx=%2214%22 fill=%22%2307130c%22/%3E%3Crect x=%222%22 y=%222%22 width=%2260%22 height=%2260%22 rx=%2212%22 fill=%22none%22 stroke=%22%2300ff66%22 stroke-opacity=%22.35%22 stroke-width=%222%22/%3E%3Cg transform=%22translate%284 -2%29%22%3E%3Cpath d=%22M15 44V20h20l14 14v10H29%22 fill=%22none%22 stroke=%22%2300ff66%22 stroke-width=%225%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22/%3E%3Cpath d=%22M15 32v24M3 44h24%22 stroke=%22%23ff4a1c%22 stroke-width=%223.2%22 stroke-linecap=%22round%22/%3E%3Ccircle cx=%2215%22 cy=%2244%22 r=%226.5%22 fill=%22url%28%23s%29%22 stroke=%22%232a2c33%22 stroke-width=%221.2%22/%3E%3Cpath d=%22M12.6 41.8l4.8 4.4M17.4 41.8l-4.8 4.4%22 stroke=%22%233a3d46%22 stroke-width=%221.1%22 stroke-linecap=%22round%22 opacity=%22.35%22/%3E%3C/g%3E%3C/svg%3E">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <meta name="theme-color" content="#07130c">
     <meta name="description" content="Simula y visualiza tu código G en 2D: trayectorias, cotas, tiempos de mecanizado y ejecución paso a paso.">
 
     <!-- Vista previa al compartir el enlace (WhatsApp, Facebook, Telegram, LinkedIn) -->
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="Simulador CNC 2D">
     <meta property="og:locale" content="es_ES">
-    <meta property="og:title" content="Simulador de Código G (CNC 2D) v2.0.36">
+    <meta property="og:title" content="Simulador de Código G (CNC 2D) v2.0.38">
     <meta property="og:description" content="Simula y visualiza tu código G en 2D: trayectorias, cotas, tiempos de mecanizado y ejecución paso a paso.">
     <meta property="og:url" content="https://simuladorcnc2d.github.io/">
     <meta property="og:image" content="https://simuladorcnc2d.github.io/preview.png">
@@ -21,7 +25,7 @@
 
     <!-- Twitter / X -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Simulador de Código G (CNC 2D) v2.0.36">
+    <meta name="twitter:title" content="Simulador de Código G (CNC 2D) v2.0.38">
     <meta name="twitter:description" content="Simula y visualiza tu código G en 2D: trayectorias, cotas y tiempos de mecanizado.">
     <meta name="twitter:image" content="https://simuladorcnc2d.github.io/preview.png">
     <style>
@@ -295,6 +299,8 @@
             color: var(--border-color);
             user-select: none;
         }
+        .app-footer .version { cursor: pointer; transition: border-color .2s, color .2s; }
+        .app-footer .version:hover { color: var(--accent); border-color: var(--accent); }
         .app-footer .version {
             font-weight: 600;
             color: var(--text-main);
@@ -411,6 +417,16 @@
             height: 24px;
             fill: currentColor;
         }
+        .rec-card { display: flex; gap: 14px; align-items: stretch; background: var(--bg-editor); border: 1px solid var(--border-color); border-radius: 10px; overflow: hidden; text-decoration: none; color: inherit; transition: border-color .2s, transform .2s; }
+        .rec-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+        .modal-box .modal-content a.rec-card:hover { text-decoration: none; }
+        .rec-thumb { width: 190px; flex-shrink: 0; background: var(--bg-body); display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-size: 34px; }
+        .rec-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .rec-info { padding: 12px 14px 12px 0; display: flex; flex-direction: column; gap: 4px; justify-content: center; }
+        .rec-info strong { color: var(--accent); font-size: 14px; }
+        .rec-info span { font-size: 12.5px; color: var(--text-muted); line-height: 1.45; }
+        .rec-info em { font-style: normal; font-size: 12px; font-weight: 600; color: var(--text-main); margin-top: 2px; }
+        @media (max-width: 560px) { .rec-card { flex-direction: column; } .rec-thumb { width: 100%; } .rec-info { padding: 0 14px 14px; } }
         .lang-selector {
             display: inline-flex;
             gap: 4px;
@@ -620,7 +636,7 @@ M30;</textarea>
     <!-- ===== FOOTER ===== -->
     <footer class="app-footer" id="appFooter">
         <div class="footer-left">
-            <span class="version" id="versionTag">v2.0.36</span>
+            <span class="version" id="versionTag" role="button" tabindex="0" onclick="abrirModal('changes')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();abrirModal('changes');}" title="Novedades">v2.0.38</span>
             <span class="status-indicator">
                 <span class="status-dot"></span>
                 <span id="statusText">Sistemas estables</span>
@@ -629,13 +645,15 @@ M30;</textarea>
             <a id="footerTerms" onclick="abrirModal('terms')">Términos</a>
             <span class="separator">|</span>
             <div class="lang-selector">
-                <button class="active" data-lang="es" onclick="cambiarIdioma('es')">ES</button>
-                <button data-lang="en" onclick="cambiarIdioma('en')">EN</button>
+                <button class="active" data-lang="es" onclick="cambiarIdioma('es')" aria-label="Español">ES</button>
+                <button data-lang="en" onclick="cambiarIdioma('en')" aria-label="English">EN</button>
             </div>
             <span class="separator">|</span>
             <a id="footerAbout" onclick="abrirModal('about')">Acerca de</a>
         </div>
         <div class="footer-right">
+            <a id="footerRecs" onclick="abrirModal('recs')">Páginas recomendadas</a>
+            <span class="separator">|</span>
             <a href="https://github.com/SimuladorCNC2D" target="_blank" class="footer-icon" aria-label="GitHub">
                 <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
             </a>
@@ -645,8 +663,8 @@ M30;</textarea>
 
     <!-- ===== MODALES ===== -->
     <div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this) cerrarModal()">
-        <div class="modal-box">
-            <button class="close-btn" onclick="cerrarModal()">&times;</button>
+        <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="modalTitleH">
+            <button class="close-btn" id="modalClose" onclick="cerrarModal()" aria-label="Cerrar">&times;</button>
             <div id="modalContent">
                 <!-- Contenido dinámico -->
             </div>
@@ -682,6 +700,13 @@ M30;</textarea>
         const versionTag = document.getElementById('versionTag');
 
         // ===== IDIOMA =====
+        // Versión: cámbiala aquí. También hay que actualizarla a mano en <title>, og:title, twitter:title y #versionTag (los lee WhatsApp/Google sin ejecutar JS).
+        const VERSION = '2.0.38';
+        // Almacenamiento local seguro (puede fallar en modo privado)
+        const ls = {
+            get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
+            set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+        };
         let currentLang = 'es';
         const translations = {
             es: {
@@ -713,6 +738,7 @@ M30;</textarea>
                 statusText: 'Sistemas estables',
                 footerTerms: 'Términos',
                 footerAbout: 'Acerca de',
+                footerRecs: 'Páginas recomendadas',
                 footerReport: 'Reportar bug',
                 btnRealista: 'Realista',
                 btnCotasOn: 'Cotas: ON',
@@ -734,14 +760,30 @@ M30;</textarea>
                 modalTermsContent: `
                     <p>Este simulador de código G se proporciona "tal cual" con fines educativos y de demostración. 
                     El autor no se hace responsable de daños directos o indirectos derivados del uso de esta herramienta.</p>
-                    <p>Los datos ingresados no se almacenan ni se transmiten a servidores externos. 
-                    Todo el procesamiento se realiza localmente en tu navegador.</p>
+                    <p>Los datos ingresados no se transmiten a servidores externos. 
+                    Todo el procesamiento se realiza localmente en tu navegador, y tu código y preferencias se guardan solo en este navegador.</p>
                     <p>Al utilizar este simulador, aceptas que es tu responsabilidad verificar la precisión de las trayectorias 
                     y que no debe utilizarse para controlar maquinaria real sin la debida validación.</p>
                 `,
+                changesTitle: 'Novedades',
+                changelog: [["Experiencia", ["Tu idioma y tu modo día/noche se recuerdan al volver.", "Tu código G se guarda automáticamente en el navegador.", "Mejoras de accesibilidad: lectores de pantalla y cierre de ventanas con Esc."]], ["Más", ["Nueva sección «Páginas recomendadas»."]]],
+                ariaEditor: "Editor de código G",
+                ariaCanvas: "Vista 2D de la trayectoria de mecanizado",
+                ariaClose: "Cerrar",
+                ariaTheme: "Cambiar entre modo día y noche",
+                ariaConsole: "Consola de mensajes",
+                ariaVersion: "Ver novedades",
+                modalRecsTitle: 'Páginas recomendadas',
+                modalRecsContent: `
+                    <p>Más herramientas hechas por FrancOS:</p>
+                    <a class="rec-card" href="https://simuladorcnc2d.github.io/Calculadora-Laboral-y-Financiera-RD/" target="_blank" rel="noopener">
+                        <div class="rec-thumb"><img src="https://simuladorcnc2d.github.io/Calculadora-Laboral-y-Financiera-RD/preview.png" alt="" loading="lazy" onerror="this.replaceWith(document.createTextNode('🧮'))"></div>
+                        <div class="rec-info"><strong>Calculadora Laboral y Financiera RD</strong><span>Calcula tu sueldo neto (AFP, ARS e ISR), presupuesto, vacaciones, doble sueldo, horas extras y feriados de República Dominicana.</span><em>Abrir calculadora →</em></div>
+                    </a>
+                `,
                 modalAboutTitle: 'Acerca de',
                 modalAboutContent: `
-                    <p><strong>Simulador de Código G (CNC 2D)</strong> — v2.0.36</p>
+                    <p><strong>Simulador de Código G (CNC 2D)</strong> — v${VERSION}</p>
                     <p>Herramienta interactiva para visualizar trayectorias de mecanizado CNC a partir de código G estándar (ISO).</p>
                     <p>Desarrollado por <strong>FrancOS</strong> — Mecatrónico. Apasionado por la electrónica, la programación y el control numérico.</p>
                     <div class="github-profile">
@@ -780,6 +822,7 @@ M30;</textarea>
                 statusText: 'Systems stable',
                 footerTerms: 'Terms',
                 footerAbout: 'About',
+                footerRecs: 'Recommended pages',
                 footerReport: 'Report bug',
                 btnRealista: 'Realistic',
                 btnCotasOn: 'Dimensions: ON',
@@ -801,14 +844,30 @@ M30;</textarea>
                 modalTermsContent: `
                     <p>This G-code simulator is provided "as is" for educational and demonstration purposes.
                     The author assumes no responsibility for direct or indirect damages arising from the use of this tool.</p>
-                    <p>Entered data is not stored or transmitted to external servers.
-                    All processing is done locally in your browser.</p>
+                    <p>Entered data is not transmitted to external servers.
+                    All processing is done locally in your browser, and your code and preferences are saved only in this browser.</p>
                     <p>By using this simulator, you agree that it is your responsibility to verify the accuracy of the trajectories
                     and that it should not be used to control real machinery without proper validation.</p>
                 `,
+                changesTitle: 'What\'s new',
+                changelog: [["Experience", ["Your language and day/night mode are remembered when you come back.", "Your G-code is saved automatically in the browser.", "Accessibility improvements: screen readers and closing windows with Esc."]], ["More", ["New “Recommended pages” section."]]],
+                ariaEditor: "G-code editor",
+                ariaCanvas: "2D view of the machining toolpath",
+                ariaClose: "Close",
+                ariaTheme: "Switch between day and night mode",
+                ariaConsole: "Message console",
+                ariaVersion: "See what's new",
+                modalRecsTitle: 'Recommended pages',
+                modalRecsContent: `
+                    <p>More tools made by FrancOS:</p>
+                    <a class="rec-card" href="https://simuladorcnc2d.github.io/Calculadora-Laboral-y-Financiera-RD/" target="_blank" rel="noopener">
+                        <div class="rec-thumb"><img src="https://simuladorcnc2d.github.io/Calculadora-Laboral-y-Financiera-RD/preview.png" alt="" loading="lazy" onerror="this.replaceWith(document.createTextNode('🧮'))"></div>
+                        <div class="rec-info"><strong>Labor & Financial Calculator RD</strong><span>Calculate your net salary (AFP, ARS and ISR), budget, vacation, double salary, overtime and holidays for the Dominican Republic.</span><em>Open calculator →</em></div>
+                    </a>
+                `,
                 modalAboutTitle: 'About',
                 modalAboutContent: `
-                    <p><strong>G-Code Simulator (CNC 2D)</strong> — v2.0.36</p>
+                    <p><strong>G-Code Simulator (CNC 2D)</strong> — v${VERSION}</p>
                     <p>Interactive tool to visualize CNC machining paths from standard G-code (ISO).</p>
                     <p>Developed by <strong>FrancOS</strong> — Mechatronics. Passionate about electronics, programming, and numerical control.</p>
                     <div class="github-profile">
@@ -823,7 +882,7 @@ M30;</textarea>
         function aplicarIdioma(lang) {
             const t = translations[lang] || translations.es;
             // Título y encabezado
-            document.title = `${t.title} v2.0.36 FrancOS 2.1`;
+            document.title = `${t.title} v${VERSION} FrancOS 2.1`;
             pageTitle.textContent = document.title;
             mainTitle.innerHTML = `${t.title} (<span class="cnc-accent">CNC 2D</span>)`;
             document.getElementById('subLabel').textContent = t.subLabel;
@@ -842,6 +901,15 @@ M30;</textarea>
             document.getElementById('statusText').textContent = t.statusText;
             document.getElementById('footerTerms').textContent = t.footerTerms;
             document.getElementById('footerAbout').textContent = t.footerAbout;
+            document.getElementById('footerRecs').textContent = t.footerRecs;
+            document.documentElement.lang = lang;
+            editor.setAttribute('aria-label', t.ariaEditor);
+            canvas.setAttribute('role', 'img'); canvas.setAttribute('aria-label', t.ariaCanvas);
+            consoleBox.setAttribute('role', 'status'); consoleBox.setAttribute('aria-live', 'polite'); consoleBox.setAttribute('aria-label', t.ariaConsole);
+            document.getElementById('modalClose').setAttribute('aria-label', t.ariaClose);
+            btnTheme.setAttribute('aria-label', t.ariaTheme);
+            versionTag.setAttribute('title', t.ariaVersion); versionTag.setAttribute('aria-label', t.ariaVersion + ' v' + VERSION);
+            ls.set('cnc_lang', lang);
             document.getElementById('footerReport').textContent = t.footerReport;
             // Botones flotantes
             document.getElementById('btnRealista').textContent = t.btnRealista;
@@ -890,14 +958,21 @@ M30;</textarea>
             } else if (tipo === 'about') {
                 title = t.modalAboutTitle;
                 body = t.modalAboutContent;
+            } else if (tipo === 'changes') {
+                title = `${t.changesTitle} (v${VERSION})`;
+                body = t.changelog.map(([cat, items]) => `<h3 style="font-size:14px;margin:14px 0 4px;color:var(--accent);">${cat}</h3><ul>${items.map(x => `<li>${x}</li>`).join('')}</ul>`).join('');
+            } else if (tipo === 'recs') {
+                title = t.modalRecsTitle;
+                body = t.modalRecsContent;
             }
-            content.innerHTML = `<h2>${title}</h2><div class="modal-content">${body}</div>`;
+            content.innerHTML = `<h2 id="modalTitleH">${title}</h2><div class="modal-content">${body}</div>`;
             overlay.classList.add('open');
         }
 
         function cerrarModal() {
             document.getElementById('modalOverlay').classList.remove('open');
         }
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') cerrarModal(); });
 
         // ===== ESTADO DE LA SIMULACIÓN =====
         let scale = 3.5, offsetX = 0, offsetY = 0, esPrimerRender = true;
@@ -939,7 +1014,13 @@ M30;</textarea>
         // ===================================================================
         //  EDITOR Y VALIDACIÓN
         // ===================================================================
+        let guardadoTimer = null;
+        function guardarCodigo() {
+            clearTimeout(guardadoTimer);
+            guardadoTimer = setTimeout(() => ls.set('cnc_code', editor.value), 400);
+        }
         function actualizarNumeracion() {
+            guardarCodigo();
             const lineas = editor.value.split('\n');
             document.getElementById('lineNumbers').innerText = lineas.map((_, i) => i + 1).join('\n');
             sincronizarScroll();
@@ -2224,12 +2305,14 @@ M30;</textarea>
         btnTheme.addEventListener('click', function(e) {
             e.stopPropagation();
             const esNoche = !document.body.classList.contains('night');
+            ls.set('cnc_theme', esNoche ? 'dark' : 'light');
             actualizarTema(esNoche);
         });
 
         (function initTheme() {
             const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-            const esNoche = isDark || !document.documentElement.hasAttribute('data-theme');
+            const savedTheme = ls.get('cnc_theme');
+            const esNoche = savedTheme ? savedTheme === 'dark' : (isDark || !document.documentElement.hasAttribute('data-theme'));
             decoSun.classList.remove('visible', 'fading');
             decoMoon.classList.remove('visible', 'fading');
             starsContainer.classList.remove('visible');
@@ -2290,9 +2373,13 @@ M30;</textarea>
         // ===================================================================
         document.addEventListener('DOMContentLoaded', () => {
             // Versión
-            versionTag.textContent = 'v2.0.36';
-            // Aplicar idioma por defecto
-            aplicarIdioma('es');
+            versionTag.textContent = 'v' + VERSION;
+            // Restaurar código guardado
+            const codigoGuardado = ls.get('cnc_code');
+            if (codigoGuardado !== null && codigoGuardado.trim() !== '') editor.value = codigoGuardado;
+            // Aplicar idioma guardado (o español por defecto)
+            const idiomaGuardado = ls.get('cnc_lang');
+            aplicarIdioma(idiomaGuardado === 'en' ? 'en' : 'es');
             actualizarNumeracion();
             btnSoftLimits.innerText = 'Límites: OFF';
             softLimitsActivos = false;
